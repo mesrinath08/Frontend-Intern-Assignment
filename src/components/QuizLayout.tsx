@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
 const QuizLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
