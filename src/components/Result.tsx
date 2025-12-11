@@ -1,5 +1,3 @@
-// import React from "react";
-
 export default function Result({ score, onRestart }: { score: number; onRestart: () => void }) {
   return (
     <div className="bg-white rounded-3xl p-12 shadow-soft text-center">

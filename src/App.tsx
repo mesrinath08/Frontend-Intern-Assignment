@@ -1,4 +1,3 @@
-// import React, { useState } from "react";
 import QuizLayout from "./components/QuizLayout";
 import QuestionCard from "./components/QuestionCard";
 import Result from "./components/Result";
