@@ -1,46 +1,65 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import QuizLayout from "./components/QuizLayout";
 import QuestionCard from "./components/QuestionCard";
-import Option from "./components/Option";
 import Result from "./components/Result";
 
-const App = () => {
-  const [index, setIndex] = useState<number>(0);
+import data from "./data/questions";
+
+function App() {
+  const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
-  const [finished, setFinished] = useState<boolean>(false);
+  const [finished, setFinished] = useState(false);
 
-  const handleNext = () => {
-    setIndex((i: number) => i + 1);
-  };
+  const current = data[index];
 
-  const handlePrev = () => {
-    if (index > 0) setIndex((i: number) => i - 1);
-  };
+  function selectAnswer(choiceIndex: number) {
+    const newAnswers = [...answers];
+    newAnswers[index] = choiceIndex;
+    setAnswers(newAnswers);
+  }
 
-  const handleAnswer = (value: number) => {
-    setAnswers((prev) => [...prev, value]);
-  };
+  function next() {
+    if (index < data.length - 1) {
+      setIndex(i => i + 1);
+    } else {
+      setFinished(true);
+    }
+  }
 
-  const correctCount = answers.reduce(
-    (acc: number, a: number) => acc + (a === 1 ? 1 : 0),
-    0
-  );
+  function prev() {
+    if (index > 0) setIndex(i => i - 1);
+  }
+
+  function restart() {
+    setIndex(0);
+    setAnswers([]);
+    setFinished(false);
+  }
+
+  const correctCount = answers.reduce((acc, a, i) => {
+    return acc + (a === data[i].answer ? 1 : 0);
+  }, 0);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <QuizLayout>
       {!finished ? (
-        <QuestionCard>
-          {/* Example usage */}
-          <Option value={1} onClick={handleAnswer} />
-          <div className="flex justify-between mt-4">
-            <button onClick={handlePrev}>Previous</button>
-            <button onClick={handleNext}>Next</button>
-          </div>
-        </QuestionCard>
+        <QuestionCard
+          question={current}
+          progress={(index / data.length) * 100}
+          selected={answers[index]}
+          onSelect={selectAnswer}
+          onNext={next}
+          onPrev={prev}
+          isLast={index === data.length - 1}
+        />
       ) : (
-        <Result correct={correctCount} total={answers.length} />
+        <Result
+          score={Math.round((correctCount / data.length) * 100)}
+          onRestart={restart}
+        />
       )}
-    </div>
+    </QuizLayout>
   );
-};
+}
 
 export default App;
